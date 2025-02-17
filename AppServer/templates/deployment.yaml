@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $service.name }}-deployment
+  namespace: traefik
 spec:
   replicas: 1
   selector:
@@ -13,13 +14,13 @@ spec:
       labels:
         app: {{ $service.name }}
     spec:
-      initContainers:
-        - name: wait-for-traefik
-          image: busybox
-          command:
-            - "/bin/sh"
-            - "-c"
-            - "until nslookup traefik.default.svc.cluster.local; do echo waiting for traefik; sleep 2; done;"
+      # initContainers:
+      #   - name: wait-for-traefik
+      #     image: busybox
+      #     command:
+      #       - "/bin/sh"
+      #       - "-c"
+      #       - "until nslookup traefik.default.svc.cluster.local; do echo waiting for traefik; sleep 2; done;"
       containers:
         - name: {{ $service.name }}
           image: {{ $.Values.global.imageRegistry }}/{{ $service.image }}:{{ $.Values.global.image.tag }}
